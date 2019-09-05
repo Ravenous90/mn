@@ -6,3 +6,25 @@
 
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
+
+@import '~jquery-ui/themes/base/all.css';
+
+.br-10 {
+  border-radius: 10px;
+}
+
+.up-block {
+  border: 2px solid $orange;
+}
+
+.middle-block {
+  border: 2px solid $green;
+}
+
+.down-block {
+  border: 2px solid $pink;
+}
+
+.add-data {
+  background-color: $cyan;
+}
