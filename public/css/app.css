@@ -12163,23 +12163,41 @@ a.text-dark:focus {
   }
 }
 
+body {
+  font-family: Verdana, sans-serif;
+}
+
 .br-10 {
   border-radius: 10px;
 }
 
-.up-block {
-  border: 2px solid #f6993f;
-}
-
-.middle-block {
-  border: 2px solid #38c172;
-}
-
-.down-block {
-  border: 2px solid #f66d9b;
-}
-
 .add-data {
   background-color: #6cb2eb;
+}
+
+.add-btn {
+  background-color: #006E6D;
+  font-size: 1.3em;
+  font-weight: 600;
+}
+
+.add-btn:hover {
+  background-color: #79C753;
+  color: #000000;
+}
+
+.custom-table-row {
+  border-bottom: 1px solid #577284;
+}
+
+.custom-table-row,
+.custom-table-sum {
+  margin: 0 1px;
+}
+
+@media screen and (max-width: 992px) {
+  body {
+    font-size: 0.9em;
+  }
 }
 

@@ -9,22 +9,42 @@
 
 @import '~jquery-ui/themes/base/all.css';
 
+body {
+  font-family: Verdana, sans-serif;
+}
+
+
 .br-10 {
   border-radius: 10px;
 }
 
-.up-block {
-  border: 2px solid $orange;
-}
-
-.middle-block {
-  border: 2px solid $green;
-}
-
-.down-block {
-  border: 2px solid $pink;
-}
 
 .add-data {
   background-color: $cyan;
+}
+
+.add-btn {
+  background-color: $usedGreen;
+  font-size: 1.3em;
+  font-weight: 600;
+}
+
+.add-btn:hover {
+  background-color: $usedLightGreen;
+  color: #000000;
+}
+
+.custom-table-row {
+  border-bottom: 1px solid $userBorderColor;
+}
+
+.custom-table-row, .custom-table-sum {
+  margin: 0 1px;
+}
+
+
+@media screen and (max-width: 992px) {
+  body {
+    font-size: 0.9em;
+  }
 }

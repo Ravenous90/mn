@@ -51444,9 +51444,29 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()('#in-button, #out-button, #plan_ou
   jquery__WEBPACK_IMPORTED_MODULE_0___default()('#data-type').val(param);
 });
 jquery__WEBPACK_IMPORTED_MODULE_0___default()('#date').datepicker({
-  dateFormat: 'dd/mm/yy'
+  dateFormat: 'dd/mm/yy',
+  defaultDate: '1/' + currentMonth + '/' + new Date().getFullYear()
 });
-jquery__WEBPACK_IMPORTED_MODULE_0___default()('#save-data-btn').click(function () {
+jquery__WEBPACK_IMPORTED_MODULE_0___default()('#select-month').change(function () {
+  var month = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).find("option:selected").val();
+  jquery__WEBPACK_IMPORTED_MODULE_0___default.a.ajaxSetup({
+    headers: {
+      'X-CSRF-TOKEN': jquery__WEBPACK_IMPORTED_MODULE_0___default()('meta[name="csrf-token"]').attr('content')
+    }
+  });
+  jquery__WEBPACK_IMPORTED_MODULE_0___default.a.ajax({
+    type: 'POST',
+    url: '/home',
+    data: {
+      month: month
+    },
+    success: function success(data) {
+      location.reload();
+    }
+  });
+});
+jquery__WEBPACK_IMPORTED_MODULE_0___default()('#save-data-btn').click(function (e) {
+  e.preventDefault();
   var dataType = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#data-type').val();
   var title = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#title').val();
   var sum = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#sum').val();
@@ -51474,12 +51494,33 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()('#save-data-btn').click(function (
         date: date
       },
       success: function success(data) {
+        // add new row to table without reload after saving to DB
+        var lastRow = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#' + dataType + '-block').children('.custom-table-row').last();
+        lastRow.after(addNewRow(date, title, sum)); // update sum in table
+
+        var sumBlock = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#' + dataType + '-sum');
+        var currentSum = parseInt(sumBlock.text());
+        sumBlock.text(currentSum + parseInt(sum)); // update fact balance
+
+        var factBalanceEl = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#fact-balance');
+        var factBalance = parseInt(factBalanceEl.text());
+
+        if (dataType === 'in') {
+          factBalanceEl.text(factBalance + parseInt(sum));
+        } else if (dataType === 'out') {
+          factBalanceEl.text(factBalance - parseInt(sum));
+        }
+
         jquery__WEBPACK_IMPORTED_MODULE_0___default()('#addData').modal('toggle');
-        console.info(data);
       }
     });
   }
 });
+
+function addNewRow(date, title, sum) {
+  return "" + "<div class='row justify-content-between custom-table-row'>" + "<div class='col-2'>" + "<span style=\"white-space:nowrap;\">" + date.replace(new RegExp('/', 'g'), '-') + "</span>" + "</div>" + "<div class='col-6'>" + title + "</div>" + "<div class='col-1'>" + sum + "</div>" + "<div class='col-1'><b>-</b></div>";
+  "</div>";
+}
 
 /***/ }),
 

@@ -10,13 +10,12 @@
       <div class="modal-body">
           {{ Form::hidden('type', null, ['id' => 'data-type']) }}
           <div class="form-group">
-            {{ Form::label('title', 'title') }}
-            {{ Form::text('title', null, ['class' => ['form-control'], 'id' => 'title']) }}
-          </div>
-
-          <div class="form-group">
               {{ Form::label('date', 'date') }}
               {{ Form::text('date', null, ['class' => ['form-control', 'datepicker'], 'id' => 'date']) }}
+          </div>
+          <div class="form-group">
+              {{ Form::label('title', 'title') }}
+              {{ Form::text('title', null, ['class' => ['form-control'], 'id' => 'title']) }}
           </div>
           <div class="form-group">
             {{ Form::label('sum', 'sum') }}
@@ -24,7 +23,7 @@
           </div>
       </div>
       <div class="modal-footer">
-          <button type="button" class="btn btn-primary w-40" id="save-data-btn">Save</button>
+          <button type="button" class="btn btn-primary w-40 add-btn" id="save-data-btn">Save</button>
         <button type="button" class="btn btn-secondary w-40" data-dismiss="modal">Close</button>
       </div>
     </div>

@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\In;
+use App\Models\Out;
+use App\Models\PlanOut;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class HomeController extends Controller
 {
@@ -16,23 +19,52 @@ class HomeController extends Controller
         $this->middleware('auth');
     }
 
-    public function index()
+    public function index(Request $request)
     {
         // get all months
-        $months = collect();
+        $months = [];
         for ($i = 1; $i <= 12; $i++) {
-            $months->push(Carbon::createFromFormat('m', $i)->format('F'));
+            $months[$i] = Carbon::createFromFormat('m', $i)->format('F');
         }
-        $currentMonthId= (int)Carbon::now()->format('m');
+        if (Session::has('month')) {
+            $currentMonthId = (int)$request->session()->get('month');
+        } else {
+            $currentMonthId = (int)Carbon::now()->format('m');
+        }
 
-        if (request()->ajax()) {
+        // request change month
+        if (request()->post('month')) {
+            Session::put('month', request()->post('month'));
+            return response()->json(['message' => request()->post('month')]);
+        }
+
+        // get data from in, plan_out, out
+        $in = In::whereMonth('date', $currentMonthId)->get();
+        $planOut = PlanOut::whereMonth('date', $currentMonthId)->get();
+        $out = Out::whereMonth('date', $currentMonthId)->get();
+
+        // get each sum
+        $sum = [];
+        $sum['in'] = $in->sum('sum');
+        $sum['plan_out'] = $planOut->sum('sum');
+        $sum['out'] = $out->sum('sum');
+
+        $balanceFact = $sum['in'] - $sum['out'];
+
+        // request add data
+        if (request()->post('dataType')) {
             $result = $this->saveData(request());
             return response()->json(['message' => $result ? 'ok' : 'fail']);
         }
 
         return view('home', [
-            'months' => $months,
+            'months'         => collect($months),
             'currentMonthId' => $currentMonthId,
+            'in'             => $in,
+            'planOut'        => $planOut,
+            'out'            => $out,
+            'sum'            => $sum,
+            'balanceFact'    => $balanceFact,
         ]);
     }
 
@@ -43,7 +75,7 @@ class HomeController extends Controller
 
         $newData = $model::create([
             'title' => $data->title,
-            'date' => Carbon::parse($data->date)->format('Y-m-d'),
+            'date' => Carbon::createFromFormat('d/m/Y', $data->date),
             'sum' => $data->sum,
             'user_id' => Auth::id(),
         ]);

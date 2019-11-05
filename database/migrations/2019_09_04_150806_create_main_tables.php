@@ -16,7 +16,7 @@ class CreateMainTables extends Migration
         Schema::create('in', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title');
-            $table->date('date');
+            $table->timestamp('date');
             $table->integer('sum');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
@@ -26,7 +26,7 @@ class CreateMainTables extends Migration
         Schema::create('plan_out', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title');
-            $table->date('date');
+            $table->timestamp('date');
             $table->integer('sum');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
@@ -36,7 +36,7 @@ class CreateMainTables extends Migration
         Schema::create('out', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title');
-            $table->date('date');
+            $table->timestamp('date');
             $table->integer('sum');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');

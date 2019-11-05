@@ -41,10 +41,33 @@ $('#in-button, #out-button, #plan_out-button').click(function () {
 });
 
 $('#date').datepicker({
-    dateFormat: 'dd/mm/yy'
+    dateFormat: 'dd/mm/yy',
+    defaultDate: '1/' + currentMonth + '/' + (new Date).getFullYear(),
 });
 
-$('#save-data-btn').click(function () {
+$('#select-month').change(function () {
+    let month = $(this).find("option:selected").val();
+
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    $.ajax({
+        type: 'POST',
+        url: '/home',
+        data: {
+            month: month,
+        },
+        success: function (data) {
+            location.reload();
+        }
+    });
+});
+
+$('#save-data-btn').click(function (e) {
+    e.preventDefault();
     let dataType = $('#data-type').val();
     let title = $('#title').val();
     let sum = $('#sum').val();
@@ -74,9 +97,45 @@ $('#save-data-btn').click(function () {
                 date: date,
             },
             success: function (data) {
+
+                // add new row to table without reload after saving to DB
+                let lastRow = $('#' + dataType + '-block').children('.custom-table-row').last();
+                lastRow.after(addNewRow(date, title, sum));
+
+                // update sum in table
+                let sumBlock = $('#' + dataType + '-sum');
+                let currentSum = parseInt(sumBlock.text());
+                sumBlock.text(currentSum + parseInt(sum));
+
+                // update fact balance
+                let factBalanceEl = $('#fact-balance');
+                let factBalance = parseInt(factBalanceEl.text());
+
+                if (dataType === 'in') {
+                    factBalanceEl.text(factBalance + parseInt(sum));
+                } else if (dataType === 'out') {
+                    factBalanceEl.text(factBalance - parseInt(sum));
+                }
+
                 $('#addData').modal('toggle');
-                console.info(data);
             }
         });
     }
 });
+
+function addNewRow(date, title, sum) {
+
+    return "" +
+        "<div class='row justify-content-between custom-table-row'>" +
+            "<div class='col-2'>" +
+                "<span style=\"white-space:nowrap;\">" +
+                    date.replace(new RegExp('/', 'g'), '-') +
+                "</span>" +
+            "</div>" +
+            "<div class='col-6'>" + title +
+            "</div>" +
+            "<div class='col-1'>" + sum +
+            "</div>" +
+            "<div class='col-1'><b>-</b></div>"
+        "</div>"
+}
